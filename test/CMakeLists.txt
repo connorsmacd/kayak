@@ -1,2 +1,5 @@
 add_executable(fixed_string_test fixed_string.cpp)
 target_link_libraries(fixed_string_test PRIVATE kayak)
+
+add_executable(struct_descriptor_test struct_descriptor.cpp)
+target_link_libraries(struct_descriptor_test PRIVATE kayak)
