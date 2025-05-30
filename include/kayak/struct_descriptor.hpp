@@ -44,7 +44,9 @@ void visit_members(auto&& visitor, T& s)
 {
   return std::apply(
     [&](auto const&... descriptors) {
-      (visitor(std::invoke(descriptors.member, s)), ...);
+      (visitor(as_string_view(descriptors.name),
+               std::invoke(descriptors.member, s)),
+       ...);
     },
     struct_descriptor<std::remove_cv_t<T>>::members::tuple);
 }

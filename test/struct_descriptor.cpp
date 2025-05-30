@@ -4,6 +4,8 @@
 
 // TODO: Improve unit testing framework
 
+using namespace std::string_view_literals;
+
 struct test_struct {
   int a{};
   double b{};
@@ -31,8 +33,18 @@ int main()
 
   auto const test_struct_0 = test_struct{.a = 1, .b = 2.0, .c = 'c'};
 
-  kayak::visit_members(overload{[](int const a) { assert(a == 1); },
-                                [](double const b) { assert(b == 2.0); },
-                                [](char const c) { assert(c == 'c'); }},
-                       test_struct_0);
+  kayak::visit_members(
+    overload{[](std::string_view const name, int const a) {
+               assert(name == "a"sv);
+               assert(a == 1);
+             },
+             [](std::string_view const name, double const b) {
+               assert(name == "b"sv);
+               assert(b == 2.0);
+             },
+             [](std::string_view const name, char const c) {
+               assert(name == "c"sv);
+               assert(c == 'c');
+             }},
+    test_struct_0);
 }
