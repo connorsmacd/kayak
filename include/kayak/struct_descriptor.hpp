@@ -3,6 +3,7 @@
 
 #include <kayak/fixed_string.hpp>
 
+#include <format>
 #include <tuple>
 #include <type_traits>
 
@@ -23,6 +24,7 @@ member_descriptor(char const (&name)[N], M member)
 
 template <member_descriptor... Ms>
 struct member_list {
+  static constexpr auto size = sizeof...(Ms);
   static constexpr auto tuple = std::tuple{Ms...};
 };
 
@@ -51,5 +53,37 @@ void visit_members(auto&& visitor, T& s)
     struct_descriptor<std::remove_cv_t<T>>::members::tuple);
 }
 } // namespace kayak
+
+template <kayak::described_struct T>
+struct std::formatter<T, char> {
+  template <typename ParseContext>
+  constexpr auto parse(ParseContext& ctx)
+  {
+    // TODO: Consider per-member format specifiers
+    return ctx.begin();
+  }
+
+  template <typename FormatContext>
+  constexpr auto format(T const& s, FormatContext& ctx) const
+  {
+    auto out = ctx.out();
+
+    std::format_to(out, "{{");
+
+    kayak::visit_members(
+      [&, i = std::size_t{0}](std::string_view const name,
+                              auto const& value) mutable {
+        out = std::format_to(out, "{}: {}", name, value);
+
+        if (++i < kayak::struct_descriptor<T>::members::size)
+          out = std::format_to(out, ", ");
+      },
+      s);
+
+    std::format_to(out, "}}");
+
+    return out;
+  }
+};
 
 #endif

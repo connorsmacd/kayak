@@ -1,5 +1,7 @@
 #include <kayak/struct_descriptor.hpp>
 
+#include <iostream>
+
 #include "assert.hpp"
 
 // TODO: Improve unit testing framework
@@ -12,6 +14,12 @@ struct test_struct {
   char c{};
 };
 
+struct nested_test_struct {
+  int x{};
+  test_struct y{};
+  bool z{};
+};
+
 namespace kayak
 {
 template <>
@@ -19,6 +27,13 @@ struct struct_descriptor<test_struct> {
   using members = member_list<{"a", &test_struct::a},
                               {"b", &test_struct::b},
                               {"c", &test_struct::c}>;
+};
+
+template <>
+struct struct_descriptor<nested_test_struct> {
+  using members = member_list<{"x", &nested_test_struct::x},
+                              {"y", &nested_test_struct::y},
+                              {"z", &nested_test_struct::z}>;
 };
 } // namespace kayak
 
@@ -47,4 +62,12 @@ int main()
                assert(c == 'c');
              }},
     test_struct_0);
+
+  assert(std::format("{}", test_struct_0) == "{a: 1, b: 2, c: c}"sv);
+
+  auto const nested_test_struct_0 = nested_test_struct{
+    .x = 42, .y = test_struct{.a = 1, .b = 2.0, .c = 'c'}, .z = true};
+
+  assert(std::format("{}", nested_test_struct_0)
+         == "{x: 42, y: {a: 1, b: 2, c: c}, z: true}"sv);
 }
