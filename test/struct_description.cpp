@@ -1,4 +1,4 @@
-#include <kayak/struct_descriptor.hpp>
+#include <kayak/struct_description.hpp>
 
 #include <iostream>
 
@@ -23,14 +23,14 @@ struct nested_test_struct {
 namespace kayak
 {
 template <>
-struct struct_descriptor<test_struct> {
+struct struct_description<test_struct> {
   using members = member_list<{"a", &test_struct::a},
                               {"b", &test_struct::b},
                               {"c", &test_struct::c}>;
 };
 
 template <>
-struct struct_descriptor<nested_test_struct> {
+struct struct_description<nested_test_struct> {
   using members = member_list<{"x", &nested_test_struct::x},
                               {"y", &nested_test_struct::y},
                               {"z", &nested_test_struct::z}>;
