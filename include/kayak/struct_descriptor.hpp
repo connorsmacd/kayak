@@ -36,8 +36,18 @@ template <member_descriptor... Ms>
 struct is_member_list<member_list<Ms...>> : std::true_type {};
 
 template <typename T>
-concept described_struct
-  = is_member_list<typename struct_descriptor<T>::members>::value;
+concept described_struct = is_member_list<
+  typename struct_descriptor<std::remove_cv_t<T>>::members>::value;
+
+template <described_struct T>
+void visit_members(auto&& visitor, T& s)
+{
+  return std::apply(
+    [&](auto const&... descriptors) {
+      (visitor(std::invoke(descriptors.member, s)), ...);
+    },
+    struct_descriptor<std::remove_cv_t<T>>::members::tuple);
+}
 } // namespace kayak
 
 #endif

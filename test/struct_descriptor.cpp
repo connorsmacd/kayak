@@ -1,5 +1,7 @@
 #include <kayak/struct_descriptor.hpp>
 
+#include "assert.hpp"
+
 // TODO: Improve unit testing framework
 
 struct test_struct {
@@ -18,7 +20,19 @@ struct struct_descriptor<test_struct> {
 };
 } // namespace kayak
 
+template <typename... Ts>
+struct overload : Ts... {
+  using Ts::operator()...;
+};
+
 int main()
 {
   static_assert(kayak::described_struct<test_struct>);
+
+  auto const test_struct_0 = test_struct{.a = 1, .b = 2.0, .c = 'c'};
+
+  kayak::visit_members(overload{[](int const a) { assert(a == 1); },
+                                [](double const b) { assert(b == 2.0); },
+                                [](char const c) { assert(c == 'c'); }},
+                       test_struct_0);
 }
