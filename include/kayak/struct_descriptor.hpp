@@ -39,5 +39,4 @@ concept described_struct
   = is_member_list<typename struct_descriptor<T>::members>::value;
 } // namespace kayak
 
-
 #endif
