@@ -11,14 +11,15 @@ namespace kayak
 template <typename T>
 concept member_ptr = std::is_member_pointer_v<T>;
 
-template <std::size_t N, member_ptr M>
+template <std::size_t L, member_ptr M>
 struct member_descriptor {
-  fixed_string<N> name;
+  fixed_string<L> name;
   M member;
 };
 
 template <std::size_t N, member_ptr M>
-member_descriptor(char const (&name)[N], M member) -> member_descriptor<N, M>;
+member_descriptor(char const (&name)[N], M member)
+  -> member_descriptor<N - 1, M>;
 
 template <member_descriptor... Ms>
 struct member_list {
