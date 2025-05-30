@@ -1,0 +1,2 @@
+add_executable(fixed_string_test fixed_string.cpp)
+target_link_libraries(fixed_string_test PRIVATE kayak)
