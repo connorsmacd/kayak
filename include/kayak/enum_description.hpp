@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <array>
 #include <ranges>
+#include <stdexcept>
 #include <utility>
 
 namespace kayak
