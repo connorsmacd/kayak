@@ -52,6 +52,65 @@ void for_each_member(auto&& visitor, T& s)
     },
     struct_description<std::remove_cv_t<T>>::members::tuple);
 }
+
+template <typename T>
+struct type_tag {
+  using type = T;
+};
+
+template <typename... Ts>
+struct type_list {
+  using tag_tuple_type = std::tuple<type_tag<Ts>...>;
+  static constexpr auto types = tag_tuple_type{};
+};
+
+template <typename T>
+struct is_type_list : std::false_type {};
+
+template <typename... Ts>
+struct is_type_list<type_list<Ts...>> : std::true_type {};
+
+template <typename T>
+concept described_struct_with_bases
+  = described_struct<T>
+    && is_type_list<
+      typename struct_description<std::remove_cv_t<T>>::bases>::value;
+
+template <described_struct_with_bases T>
+void for_each_base(auto&& visitor, T& s)
+{
+  using bases = typename struct_description<std::remove_cv_t<T>>::bases;
+
+  std::apply(
+    // TODO: Make const-agnostic
+    [&](auto const&... base_tags) {
+      (visitor(static_cast<std::conditional_t<
+                 std::is_const_v<T>,
+                 typename std::remove_cvref_t<decltype(base_tags)>::type const&,
+                 typename std::remove_cvref_t<decltype(base_tags)>::type&>>(s)),
+       ...);
+    },
+    bases::types);
+}
+
+template <typename... Ts>
+struct overload : Ts... {
+  using Ts::operator()...;
+};
+
+template <described_struct_with_bases T>
+void for_each_member_recurse_bases(auto&& visitor, T& s)
+{
+  for_each_member(visitor, s);
+
+  for_each_base(overload{[&](described_struct_with_bases auto& base) {
+                           for_each_member_recurse_bases(visitor, base);
+                         },
+                         [&](described_struct auto& base) {
+                           for_each_member(visitor, base);
+                         }},
+                s);
+}
 } // namespace kayak
 
 template <kayak::described_struct T>
