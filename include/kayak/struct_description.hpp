@@ -42,7 +42,7 @@ concept described_struct = is_member_list<
   typename struct_description<std::remove_cv_t<T>>::members>::value;
 
 template <described_struct T>
-void for_each_member(auto&& visitor, T& s)
+constexpr void for_each_member(auto &&visitor, T &s)
 {
   return std::apply(
     [&](auto const&... descriptions) {
@@ -77,7 +77,7 @@ concept described_struct_with_bases
       typename struct_description<std::remove_cv_t<T>>::bases>::value;
 
 template <described_struct_with_bases T>
-void for_each_base(auto&& visitor, T& s)
+constexpr void for_each_base(auto &&visitor, T &s)
 {
   using bases = typename struct_description<std::remove_cv_t<T>>::bases;
 
@@ -98,7 +98,7 @@ struct overload : Ts... {
 };
 
 template <described_struct_with_bases T>
-void for_each_member_recurse_bases(auto&& visitor, T& s)
+constexpr void for_each_member_recurse_bases(auto &&visitor, T &s)
 {
   for_each_member(visitor, s);
 
