@@ -120,6 +120,13 @@ int main()
 
   kayak::for_each_base(
     overload{
+      [](test_bases::b const& b) { assert(b.b_member == 2.0); },
+      [](test_bases::c const& c) { assert(c.c_member == 'c'); },
+    },
+    test_bases_d_0);
+
+  kayak::for_each_base_recurse(
+    overload{
       [](test_bases::a const& a) { assert(a.a_member == 1); },
       [](test_bases::b const& b) { assert(b.b_member == 2.0); },
       [](test_bases::c const& c) { assert(c.c_member == 'c'); },

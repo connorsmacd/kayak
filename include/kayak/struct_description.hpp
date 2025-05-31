@@ -98,7 +98,18 @@ struct overload : Ts... {
 };
 
 template <described_struct_with_bases T>
-constexpr void for_each_member_recurse_bases(auto &&visitor, T &s)
+constexpr void for_each_base_recurse(auto&& visitor, T& s)
+{
+  for_each_base(overload{[&](described_struct_with_bases auto& base) {
+                           visitor(base);
+                           for_each_base_recurse(visitor, base);
+                         },
+                         [&](described_struct auto& base) { visitor(base); }},
+                s);
+}
+
+template <described_struct_with_bases T>
+constexpr void for_each_member_recurse_bases(auto&& visitor, T& s)
 {
   for_each_member(visitor, s);
 
