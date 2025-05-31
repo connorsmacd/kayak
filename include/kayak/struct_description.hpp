@@ -42,7 +42,7 @@ concept described_struct = is_member_list<
   typename struct_description<std::remove_cv_t<T>>::members>::value;
 
 template <described_struct T>
-void visit_members(auto&& visitor, T& s)
+void for_each_member(auto&& visitor, T& s)
 {
   return std::apply(
     [&](auto const&... descriptions) {
@@ -70,7 +70,7 @@ struct std::formatter<T, char> {
 
     std::format_to(out, "{{");
 
-    kayak::visit_members(
+    kayak::for_each_member(
       [&, i = std::size_t{0}](std::string_view const name,
                               auto const& value) mutable {
         out = std::format_to(out, "{}: {}", name, value);

@@ -48,7 +48,7 @@ int main()
 
   auto const test_struct_0 = test_struct{.a = 1, .b = 2.0, .c = 'c'};
 
-  kayak::visit_members(
+  kayak::for_each_member(
     overload{[](std::string_view const name, int const a) {
                assert(name == "a"sv);
                assert(a == 1);
