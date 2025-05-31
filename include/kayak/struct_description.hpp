@@ -82,7 +82,6 @@ void for_each_base(auto&& visitor, T& s)
   using bases = typename struct_description<std::remove_cv_t<T>>::bases;
 
   std::apply(
-    // TODO: Make const-agnostic
     [&](auto const&... base_tags) {
       (visitor(static_cast<std::conditional_t<
                  std::is_const_v<T>,
