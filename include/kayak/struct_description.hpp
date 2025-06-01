@@ -46,7 +46,7 @@ constexpr void for_each_member(auto&& visitor, T& s)
 {
   return std::apply(
     [&](auto const&... descriptions) {
-      (visitor(as_string_view(descriptions.name),
+      (visitor(to_string_view(descriptions.name),
                std::invoke(descriptions.member, s)),
        ...);
     },
