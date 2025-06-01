@@ -42,7 +42,7 @@ concept described_struct = is_member_list<
   typename struct_description<std::remove_cv_t<T>>::members>::value;
 
 template <described_struct T>
-constexpr void for_each_member(auto &&visitor, T &s)
+constexpr void for_each_member(auto&& visitor, T& s)
 {
   return std::apply(
     [&](auto const&... descriptions) {
@@ -76,8 +76,13 @@ concept described_struct_with_bases
     && is_type_list<
       typename struct_description<std::remove_cv_t<T>>::bases>::value;
 
+template <described_struct T>
+constexpr void for_each_base(auto&&, T&)
+{
+}
+
 template <described_struct_with_bases T>
-constexpr void for_each_base(auto &&visitor, T &s)
+constexpr void for_each_base(auto&& visitor, T& s)
 {
   using bases = typename struct_description<std::remove_cv_t<T>>::bases;
 
@@ -92,34 +97,30 @@ constexpr void for_each_base(auto &&visitor, T &s)
     bases::types);
 }
 
-template <typename... Ts>
-struct overload : Ts... {
-  using Ts::operator()...;
-};
+template <described_struct T>
+constexpr void for_each_base_recurse(auto&& visitor, T& s)
+{
+  for_each_base(visitor, s);
+}
 
 template <described_struct_with_bases T>
 constexpr void for_each_base_recurse(auto&& visitor, T& s)
 {
-  for_each_base(overload{[&](described_struct_with_bases auto& base) {
-                           visitor(base);
-                           for_each_base_recurse(visitor, base);
-                         },
-                         [&](described_struct auto& base) { visitor(base); }},
-                s);
+  for_each_base([&](auto& base) { for_each_base_recurse(visitor, base); }, s);
+}
+
+template <described_struct T>
+constexpr void for_each_member_recurse_bases(auto&& visitor, T& s)
+{
+  for_each_member(visitor, s);
 }
 
 template <described_struct_with_bases T>
 constexpr void for_each_member_recurse_bases(auto&& visitor, T& s)
 {
   for_each_member(visitor, s);
-
-  for_each_base(overload{[&](described_struct_with_bases auto& base) {
-                           for_each_member_recurse_bases(visitor, base);
-                         },
-                         [&](described_struct auto& base) {
-                           for_each_member(visitor, base);
-                         }},
-                s);
+  for_each_base(
+    [&](auto& base) { for_each_member_recurse_bases(visitor, base); }, s);
 }
 } // namespace kayak
 
