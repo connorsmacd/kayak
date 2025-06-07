@@ -34,6 +34,41 @@ struct fixed_string {
   constexpr auto end() noexcept -> iterator { return std::next(data, L); }
 };
 
+inline namespace literals
+{
+inline namespace fixed_string_literals
+{
+template <fixed_string F>
+constexpr auto operator""_fs() noexcept
+{
+  return F;
+}
+} // namespace fixed_string_literals
+} // namespace literals
+
+template <std::size_t L>
+constexpr auto to_string_view(fixed_string<L> const& fs)
+{
+  return std::string_view(fs.data, L);
+}
+
+template <std::size_t L1, std::size_t L2>
+constexpr auto operator==(fixed_string<L1> const& lhs,
+                          fixed_string<L2> const& rhs) noexcept -> bool
+{
+  if constexpr (L1 != L2)
+    return false;
+  else
+    return to_string_view(lhs) == to_string_view(rhs);
+}
+
+template <std::size_t L1, std::size_t L2>
+constexpr auto operator<=>(fixed_string<L1> const& lhs,
+                           fixed_string<L2> const& rhs) noexcept
+{
+  return to_string_view(lhs) <=> to_string_view(rhs);
+}
+
 template <std::size_t L1, std::size_t L2>
 constexpr auto operator+(fixed_string<L1> const& lhs,
                          fixed_string<L2> const& rhs) noexcept
@@ -55,12 +90,6 @@ struct is_fixed_string : std::false_type {};
 
 template <std::size_t L>
 struct is_fixed_string<fixed_string<L>> : std::true_type {};
-
-template <std::size_t L>
-constexpr auto to_string_view(fixed_string<L> const& fs)
-{
-  return std::string_view(fs.data, L);
-}
 } // namespace kayak
 
 #endif
