@@ -34,6 +34,15 @@ struct fixed_string {
   constexpr auto end() noexcept -> iterator { return std::next(data, L); }
 };
 
+template <std::size_t N>
+fixed_string(char const (&c_str)[N]) -> fixed_string<N - 1>;
+
+template <typename T>
+struct is_fixed_string : std::false_type {};
+
+template <std::size_t L>
+struct is_fixed_string<fixed_string<L>> : std::true_type {};
+
 inline namespace literals
 {
 inline namespace fixed_string_literals
@@ -97,15 +106,6 @@ constexpr auto operator+(char const (&c_str)[N],
 {
   return fixed_string<N - 1>{c_str} + rhs;
 }
-
-template <std::size_t N>
-fixed_string(char const (&c_str)[N]) -> fixed_string<N - 1>;
-
-template <typename T>
-struct is_fixed_string : std::false_type {};
-
-template <std::size_t L>
-struct is_fixed_string<fixed_string<L>> : std::true_type {};
 } // namespace kayak
 
 #endif
