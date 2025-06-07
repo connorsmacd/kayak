@@ -106,6 +106,31 @@ constexpr auto operator+(char const (&c_str)[N],
 {
   return fixed_string<N - 1>{c_str} + rhs;
 }
+
+namespace detail
+{
+template <std::size_t Digit>
+  requires(Digit < 10)
+constexpr auto digit_to_fixed_string() -> fixed_string<1>
+{
+  auto result = fixed_string<1>{};
+  result.data[0] = '0' + static_cast<char>(Digit);
+  return result;
+}
+
+template <std::size_t Number>
+constexpr auto to_fixed_string()
+{
+  if constexpr (Number < 10)
+    return detail::digit_to_fixed_string<Number>();
+  else
+    return to_fixed_string<Number / 10>()
+           + detail::digit_to_fixed_string<Number % 10>();
+}
+} // namespace detail
+
+template <std::size_t Number>
+static constexpr auto as_fixed_string = detail::to_fixed_string<Number>();
 } // namespace kayak
 
 #endif

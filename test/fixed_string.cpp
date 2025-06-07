@@ -71,3 +71,12 @@ TEST_CASE("fixed_string concatenation", "[fixed_string]")
   STATIC_REQUIRE(fs5.data[9] == '\0');
   STATIC_REQUIRE(fs5 == "c_strtest"_fs);
 }
+
+TEST_CASE("fixed_string from number", "[fixed_string]")
+{
+  STATIC_REQUIRE(kayak::as_fixed_string<0> == "0"_fs);
+  STATIC_REQUIRE(kayak::as_fixed_string<1> == "1"_fs);
+  STATIC_REQUIRE(kayak::as_fixed_string<10> == "10"_fs);
+  STATIC_REQUIRE(kayak::as_fixed_string<100> == "100"_fs);
+  STATIC_REQUIRE(kayak::as_fixed_string<1234> == "1234"_fs);
+}
