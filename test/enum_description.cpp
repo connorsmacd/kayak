@@ -48,6 +48,10 @@ int main()
   static_assert(kayak::to_string_view(contiguous_test_enum::d) == "d"sv);
 
   assert(kayak::to_string(contiguous_test_enum::a) == "a"s);
+  assert(kayak::to_string(contiguous_test_enum::b) == "b"s);
+
+  assert(std::format("{}", contiguous_test_enum::a) == "a"s);
+  assert(std::format("{}", contiguous_test_enum::b) == "b"s);
 
   static_assert(kayak::from_string<contiguous_test_enum>("a"sv)
                 == contiguous_test_enum::a);

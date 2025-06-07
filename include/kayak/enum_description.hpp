@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <array>
+#include <format>
 #include <ranges>
 #include <stdexcept>
 #include <utility>
@@ -143,5 +144,21 @@ constexpr auto from_string(std::string_view const s) -> T
   return it->second;
 }
 } // namespace kayak
+
+template <kayak::described_enum T>
+struct std::formatter<T, char> {
+  template <typename ParseContext>
+  constexpr auto parse(ParseContext& ctx)
+  {
+    // TODO: Consider what format options to support.
+    return ctx.begin();
+  }
+
+  template <typename FormatContext>
+  constexpr auto format(T const e, FormatContext& ctx) const
+  {
+    return std::format_to(ctx.out(), "{}", kayak::to_string(e));
+  }
+};
 
 #endif
