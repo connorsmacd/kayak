@@ -82,6 +82,22 @@ constexpr auto operator+(fixed_string<L1> const& lhs,
   return result;
 }
 
+template <std::size_t L, std::size_t N>
+constexpr auto operator+(fixed_string<L> const& lhs,
+                         char const (&c_str)[N]) noexcept
+  -> fixed_string<L + N - 1>
+{
+  return lhs + fixed_string<N - 1>{c_str};
+}
+
+template <std::size_t N, std::size_t L>
+constexpr auto operator+(char const (&c_str)[N],
+                         fixed_string<L> const& rhs) noexcept
+  -> fixed_string<N + L - 1>
+{
+  return fixed_string<N - 1>{c_str} + rhs;
+}
+
 template <std::size_t N>
 fixed_string(char const (&c_str)[N]) -> fixed_string<N - 1>;
 

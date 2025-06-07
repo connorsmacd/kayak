@@ -101,32 +101,27 @@ struct type_description<long double> :
 // TODO: The east-const here might be controversial.
 template <described_type T>
 struct type_description<T const> :
-  type_description_impl<name_of<T> + fixed_string{" const"}, T const> {};
+  type_description_impl<name_of<T> + " const", T const> {};
 
 template <described_type T>
 struct type_description<T volatile> :
-  type_description_impl<name_of<T> + fixed_string{" volatile"}, T volatile> {};
+  type_description_impl<name_of<T> + " volatile", T volatile> {};
 
 template <described_type T>
 struct type_description<T const volatile> :
-  type_description_impl<name_of<T> + fixed_string{" const volatile"},
-                        T const volatile> {};
+  type_description_impl<name_of<T> + " const volatile", T const volatile> {};
 
 template <described_type T>
-struct type_description<T&> :
-  type_description_impl<name_of<T> + fixed_string{"&"}, T&> {};
+struct type_description<T&> : type_description_impl<name_of<T> + "&", T&> {};
 
 template <described_type T>
-struct type_description<T&&> :
-  type_description_impl<name_of<T> + fixed_string{"&&"}, T&&> {};
+struct type_description<T&&> : type_description_impl<name_of<T> + "&&", T&&> {};
 
 template <described_type T>
-struct type_description<T*> :
-  type_description_impl<name_of<T> + fixed_string{"*"}, T*> {};
+struct type_description<T*> : type_description_impl<name_of<T> + "*", T*> {};
 
 template <described_type T>
-struct type_description<T[]> :
-  type_description_impl<name_of<T> + fixed_string{"[]"}, T[]> {};
+struct type_description<T[]> : type_description_impl<name_of<T> + "[]", T[]> {};
 } // namespace kayak
 
 #endif
