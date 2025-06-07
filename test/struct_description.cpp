@@ -1,10 +1,6 @@
 #include <kayak/struct_description.hpp>
 
-#include <iostream>
-
-#include "assert.hpp"
-
-// TODO: Improve unit testing framework
+#include <catch2/catch_test_macros.hpp>
 
 using namespace std::string_view_literals;
 
@@ -80,36 +76,42 @@ struct overload : Ts... {
   using Ts::operator()...;
 };
 
-int main()
+TEST_CASE("basic struct_description", "[struct_description]")
 {
-  static_assert(kayak::described_struct<test_struct>);
+  STATIC_REQUIRE(kayak::described_struct<test_struct>);
 
-  auto const test_struct_0 = test_struct{.a = 1, .b = 2.0, .c = 'c'};
+  static constexpr auto test_struct_0 = test_struct{.a = 1, .b = 2.0, .c = 'c'};
 
   kayak::for_each_member(
     overload{[](std::string_view const name, int const a) {
-               assert(name == "a"sv);
-               assert(a == 1);
+               REQUIRE(name == "a"sv);
+               REQUIRE(a == 1);
              },
              [](std::string_view const name, double const b) {
-               assert(name == "b"sv);
-               assert(b == 2.0);
+               REQUIRE(name == "b"sv);
+               REQUIRE(b == 2.0);
              },
              [](std::string_view const name, char const c) {
-               assert(name == "c"sv);
-               assert(c == 'c');
+               REQUIRE(name == "c"sv);
+               REQUIRE(c == 'c');
              }},
     test_struct_0);
 
-  assert(std::format("{}", test_struct_0) == "{a: 1, b: 2, c: c}"sv);
+  REQUIRE(std::format("{}", test_struct_0) == "{a: 1, b: 2, c: c}"sv);
+}
 
-  auto const nested_test_struct_0 = nested_test_struct{
+TEST_CASE("nested struct_description", "[struct_description]")
+{
+  static constexpr auto nested_test_struct_0 = nested_test_struct{
     .x = 42, .y = test_struct{.a = 1, .b = 2.0, .c = 'c'}, .z = true};
 
-  assert(std::format("{}", nested_test_struct_0)
-         == "{x: 42, y: {a: 1, b: 2, c: c}, z: true}"sv);
+  REQUIRE(std::format("{}", nested_test_struct_0)
+          == "{x: 42, y: {a: 1, b: 2, c: c}, z: true}"sv);
+}
 
-  auto const test_bases_d_0 = [] {
+TEST_CASE("struct_description with bases", "[struct_description]")
+{
+  static constexpr auto test_bases_d_0 = [] {
     test_bases::d d;
     d.a_member = 1;
     d.b_member = 2.0;
@@ -120,35 +122,35 @@ int main()
 
   kayak::for_each_base(
     overload{
-      [](test_bases::b const& b) { assert(b.b_member == 2.0); },
-      [](test_bases::c const& c) { assert(c.c_member == 'c'); },
+      [](test_bases::b const& b) { REQUIRE(b.b_member == 2.0); },
+      [](test_bases::c const& c) { REQUIRE(c.c_member == 'c'); },
     },
     test_bases_d_0);
 
   kayak::for_each_base_recurse(
     overload{
-      [](test_bases::a const& a) { assert(a.a_member == 1); },
-      [](test_bases::b const& b) { assert(b.b_member == 2.0); },
-      [](test_bases::c const& c) { assert(c.c_member == 'c'); },
+      [](test_bases::a const& a) { REQUIRE(a.a_member == 1); },
+      [](test_bases::b const& b) { REQUIRE(b.b_member == 2.0); },
+      [](test_bases::c const& c) { REQUIRE(c.c_member == 'c'); },
     },
     test_bases_d_0);
 
   kayak::for_each_member_recurse_bases(
     overload{[](std::string_view const name, int const a) {
-               assert(name == "a_member"sv);
-               assert(a == 1);
+               REQUIRE(name == "a_member"sv);
+               REQUIRE(a == 1);
              },
              [](std::string_view const name, double const b) {
-               assert(name == "b_member"sv);
-               assert(b == 2.0);
+               REQUIRE(name == "b_member"sv);
+               REQUIRE(b == 2.0);
              },
              [](std::string_view const name, char const c) {
-               assert(name == "c_member"sv);
-               assert(c == 'c');
+               REQUIRE(name == "c_member"sv);
+               REQUIRE(c == 'c');
              },
              [](std::string_view const name, bool const d) {
-               assert(name == "d_member"sv);
-               assert(d == true);
+               REQUIRE(name == "d_member"sv);
+               REQUIRE(d == true);
              }},
     test_bases_d_0);
 }

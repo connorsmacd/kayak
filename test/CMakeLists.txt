@@ -1,8 +1,11 @@
 add_executable(enum_description_test enum_description.cpp)
-target_link_libraries(enum_description_test PRIVATE kayak)
+target_link_libraries(enum_description_test PRIVATE kayak Catch2::Catch2WithMain)
+add_test(NAME enum_description_test COMMAND enum_description_test)
 
 add_executable(fixed_string_test fixed_string.cpp)
-target_link_libraries(fixed_string_test PRIVATE kayak)
+target_link_libraries(fixed_string_test PRIVATE kayak Catch2::Catch2WithMain)
+add_test(NAME fixed_string_test COMMAND fixed_string_test)
 
 add_executable(struct_description_test struct_description.cpp)
-target_link_libraries(struct_description_test PRIVATE kayak)
+target_link_libraries(struct_description_test PRIVATE kayak Catch2::Catch2WithMain)
+add_test(NAME struct_description_test COMMAND struct_description_test)

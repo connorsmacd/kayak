@@ -4,5 +4,12 @@ project(kayak LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 
+include(CTest)
+
+add_subdirectory(external)
+
 add_subdirectory(src)
-add_subdirectory(test)
+
+if(BUILD_TESTING)
+    add_subdirectory(test)
+endif()
