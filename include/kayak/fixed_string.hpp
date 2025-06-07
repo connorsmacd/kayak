@@ -28,10 +28,10 @@ struct fixed_string {
 
   constexpr auto cend() const noexcept -> const_iterator
   {
-    return std::next(data, L + 1);
+    return std::next(data, L);
   }
   constexpr auto end() const noexcept -> const_iterator { return cend(); }
-  constexpr auto end() noexcept -> iterator { return std::next(data, L + 1); }
+  constexpr auto end() noexcept -> iterator { return std::next(data, L); }
 };
 
 template <std::size_t L1, std::size_t L2>
