@@ -41,16 +41,26 @@ template <typename T>
 concept described_struct = is_member_list<
   typename struct_description<std::remove_cv_t<T>>::members>::value;
 
-template <described_struct T>
-constexpr void for_each_member(auto&& visitor, T& s)
+namespace detail
 {
-  return std::apply(
+template <typename Func, described_struct T>
+constexpr void for_each_member_impl(Func& func, T& s)
+{
+  std::apply(
     [&](auto const&... descriptions) {
-      (visitor(to_string_view(descriptions.name),
-               std::invoke(descriptions.member, s)),
+      (func(to_string_view(descriptions.name),
+            std::invoke(descriptions.member, s)),
        ...);
     },
     struct_description<std::remove_cv_t<T>>::members::tuple);
+}
+} // namespace detail
+
+template <typename Func, described_struct T>
+constexpr auto for_each_member(Func func, T& s) -> Func
+{
+  detail::for_each_member_impl(func, s);
+  return func;
 }
 
 template <typename T>
@@ -76,51 +86,85 @@ concept described_struct_with_bases
     && is_type_list<
       typename struct_description<std::remove_cv_t<T>>::bases>::value;
 
-template <described_struct T>
-constexpr void for_each_base(auto&&, T&)
+namespace detail
+{
+template <typename Func, described_struct T>
+constexpr void for_each_base_impl(Func&, T&)
 {
 }
 
-template <described_struct_with_bases T>
-constexpr void for_each_base(auto&& visitor, T& s)
+template <typename Func, described_struct_with_bases T>
+constexpr void for_each_base_impl(Func& func, T& s)
 {
   using bases = typename struct_description<std::remove_cv_t<T>>::bases;
 
   std::apply(
     [&](auto const&... base_tags) {
-      (visitor(static_cast<std::conditional_t<
-                 std::is_const_v<T>,
-                 typename std::remove_cvref_t<decltype(base_tags)>::type const&,
-                 typename std::remove_cvref_t<decltype(base_tags)>::type&>>(s)),
+      (func(static_cast<std::conditional_t<
+              std::is_const_v<T>,
+              typename std::remove_cvref_t<decltype(base_tags)>::type const&,
+              typename std::remove_cvref_t<decltype(base_tags)>::type&>>(s)),
        ...);
     },
     bases::types);
 }
+} // namespace detail
 
-template <described_struct T>
-constexpr void for_each_base_recurse(auto&& visitor, T& s)
+template <typename Func, described_struct T>
+constexpr auto for_each_base(Func func, T& s) -> Func
 {
-  for_each_base(visitor, s);
+  detail::for_each_base_impl(func, s);
+  return func;
 }
 
-template <described_struct_with_bases T>
-constexpr void for_each_base_recurse(auto&& visitor, T& s)
+namespace detail
 {
-  for_each_base([&](auto& base) { for_each_base_recurse(visitor, base); }, s);
+template <typename Func, described_struct T>
+constexpr void for_each_base_recurse_impl(Func&, T&)
+{
 }
 
-template <described_struct T>
-constexpr void for_each_member_recurse_bases(auto&& visitor, T& s)
+template <typename Func, described_struct_with_bases T>
+constexpr void for_each_base_recurse_impl(Func& func, T& s)
 {
-  for_each_member(visitor, s);
-}
-
-template <described_struct_with_bases T>
-constexpr void for_each_member_recurse_bases(auto&& visitor, T& s)
-{
-  for_each_member(visitor, s);
   for_each_base(
-    [&](auto& base) { for_each_member_recurse_bases(visitor, base); }, s);
+    [&](auto& base) {
+      for_each_base_recurse_impl(func, base);
+      std::invoke(func, base);
+    },
+    s);
+}
+} // namespace detail
+
+template <typename Func, described_struct T>
+constexpr auto for_each_base_recurse(Func func, T& s) -> Func
+{
+  detail::for_each_base_recurse_impl(func, s);
+  return func;
+}
+
+namespace detail
+{
+template <typename Func, described_struct T>
+constexpr void for_each_member_recurse_bases_impl(Func& func, T& s)
+{
+  detail::for_each_member_impl(func, s);
+}
+
+template <typename Func, described_struct_with_bases T>
+constexpr void for_each_member_recurse_bases_impl(Func& func, T& s)
+{
+  for_each_base(
+    [&](auto& base) { for_each_member_recurse_bases_impl(func, base); }, s);
+  detail::for_each_member_impl(func, s);
+}
+} // namespace detail
+
+template <typename Func, described_struct T>
+constexpr auto for_each_member_recurse_bases(Func func, T& s) -> Func
+{
+  detail::for_each_member_recurse_bases_impl(func, s);
+  return func;
 }
 } // namespace kayak
 
