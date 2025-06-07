@@ -1,2 +1,3 @@
 # kayak
-A macro-free C++20 reflection library
+
+A C++20 reflection library with minimal macro usage.

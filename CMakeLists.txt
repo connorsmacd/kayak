@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(kayak LANGUAGES CXX)
+project(kayak
+    VERSION 0.0.0
+    LANGUAGES CXX
+    DESCRIPTION "A C++20 reflection library with minimal macro usage"
+    HOMEPAGE_URL "https://https://github.com/connorsmacd/kayak"
+)
 
 set(CMAKE_CXX_STANDARD 20)
 
