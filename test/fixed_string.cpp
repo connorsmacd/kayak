@@ -61,13 +61,13 @@ TEST_CASE("fixed_string concatenation", "[fixed_string]")
   static constexpr auto fs3 = fs1 + fs2;
 
   STATIC_REQUIRE(fs3.data[9] == '\0');
-  STATIC_REQUIRE(fs3.data == "testtest2"sv);
+  STATIC_REQUIRE(fs3 == "testtest2"_fs);
 
   static constexpr auto fs4 = fs1 + "c_str";
   STATIC_REQUIRE(fs4.data[9] == '\0');
-  STATIC_REQUIRE(fs4.data == "testc_str"sv);
+  STATIC_REQUIRE(fs4 == "testc_str"_fs);
 
   static constexpr auto fs5 = "c_str"_fs + fs1;
   STATIC_REQUIRE(fs5.data[9] == '\0');
-  STATIC_REQUIRE(fs5.data == "c_strtest"sv);
+  STATIC_REQUIRE(fs5 == "c_strtest"_fs);
 }
