@@ -25,23 +25,23 @@ TEST_CASE("fixed_string literal", "[fixed_string]")
 
 TEST_CASE("fixed_string iterators", "[fixed_string]")
 {
-  static constexpr auto fs = kayak::fixed_string{"test"};
+  static constexpr auto fs = "test"_fs;
 
   STATIC_REQUIRE(std::ranges::equal(fs, "test"sv));
 }
 
 TEST_CASE("fixed_string std::string_view conversion", "[fixed_string]")
 {
-  static constexpr auto fs = kayak::fixed_string{"test"};
+  static constexpr auto fs = "test"_fs;
 
   STATIC_REQUIRE(to_string_view(fs) == "test"sv);
 }
 
 TEST_CASE("fixed_string comparison", "[fixed_string]")
 {
-  static constexpr auto fs1 = kayak::fixed_string{"test"};
-  static constexpr auto fs2 = kayak::fixed_string{"test"};
-  static constexpr auto fs3 = kayak::fixed_string{"test2"};
+  static constexpr auto fs1 = "test"_fs;
+  static constexpr auto fs2 = "test"_fs;
+  static constexpr auto fs3 = "test2"_fs;
 
   STATIC_REQUIRE(fs1 == fs2);
   STATIC_REQUIRE(fs1 != fs3);
@@ -56,8 +56,8 @@ TEST_CASE("fixed_string comparison", "[fixed_string]")
 
 TEST_CASE("fixed_string concatenation", "[fixed_string]")
 {
-  static constexpr auto fs1 = kayak::fixed_string{"test"};
-  static constexpr auto fs2 = kayak::fixed_string{"test2"};
+  static constexpr auto fs1 = "test"_fs;
+  static constexpr auto fs2 = "test2"_fs;
   static constexpr auto fs3 = fs1 + fs2;
 
   STATIC_REQUIRE(fs3.data[9] == '\0');
