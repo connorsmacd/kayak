@@ -38,11 +38,19 @@ struct d : b, c {
 namespace kayak
 {
 template <>
+struct type_description<test_struct> :
+  type_description_impl<"test_struct", test_struct> {};
+
+template <>
 struct struct_description<test_struct> {
   using members = member_list<{"a", &test_struct::a},
                               {"b", &test_struct::b},
                               {"c", &test_struct::c}>;
 };
+
+template <>
+struct type_description<nested_test_struct> :
+  type_description_impl<"nested_test_struct", nested_test_struct> {};
 
 template <>
 struct struct_description<nested_test_struct> {
@@ -52,18 +60,37 @@ struct struct_description<nested_test_struct> {
 };
 
 template <>
+struct type_description<test_bases::a> :
+  type_description_impl<"test_bases::a", test_bases::a> {};
+
+template <>
 struct struct_description<test_bases::a> {
   using members = member_list<{"a_member", &test_bases::a::a_member}>;
 };
+
+template <>
+struct type_description<test_bases::b> :
+  type_description_impl<"test_bases::b", test_bases::b> {};
+
 template <>
 struct struct_description<test_bases::b> {
   using bases = type_list<test_bases::a>;
   using members = member_list<{"b_member", &test_bases::b::b_member}>;
 };
+
+template <>
+struct type_description<test_bases::c> :
+  type_description_impl<"test_bases::c", test_bases::c> {};
+
 template <>
 struct struct_description<test_bases::c> {
   using members = member_list<{"c_member", &test_bases::c::c_member}>;
 };
+
+template <>
+struct type_description<test_bases::d> :
+  type_description_impl<"test_bases::d", test_bases::d> {};
+
 template <>
 struct struct_description<test_bases::d> {
   using bases = type_list<test_bases::b, test_bases::c>;

@@ -2,6 +2,7 @@
 #define KAYAK_STRUCT_DESCRIPTION_HPP
 
 #include <kayak/fixed_string.hpp>
+#include <kayak/type_list.hpp>
 
 #include <format>
 #include <tuple>
@@ -64,23 +65,6 @@ constexpr auto for_each_member(Func func, T& s) -> Func
 }
 
 template <typename T>
-struct type_tag {
-  using type = T;
-};
-
-template <typename... Ts>
-struct type_list {
-  using tag_tuple_type = std::tuple<type_tag<Ts>...>;
-  static constexpr auto types = tag_tuple_type{};
-};
-
-template <typename T>
-struct is_type_list : std::false_type {};
-
-template <typename... Ts>
-struct is_type_list<type_list<Ts...>> : std::true_type {};
-
-template <typename T>
 concept described_struct_with_bases
   = described_struct<T>
     && is_type_list<
@@ -93,20 +77,24 @@ constexpr void for_each_base_impl(Func&, T&)
 {
 }
 
+template <typename From, typename To>
+using propagate_const_ref_t
+  = std::conditional_t<std::is_const_v<From>, To const&, To&>;
+
 template <typename Func, described_struct_with_bases T>
 constexpr void for_each_base_impl(Func& func, T& s)
 {
   using bases = typename struct_description<std::remove_cv_t<T>>::bases;
 
   std::apply(
-    [&](auto const&... base_tags) {
-      (func(static_cast<std::conditional_t<
-              std::is_const_v<T>,
-              typename std::remove_cvref_t<decltype(base_tags)>::type const&,
-              typename std::remove_cvref_t<decltype(base_tags)>::type&>>(s)),
+    [&](auto const&... base_descriptions) {
+      (func(static_cast<propagate_const_ref_t<
+              T,
+              typename std::remove_cvref_t<decltype(base_descriptions)>::type>>(
+         s)),
        ...);
     },
-    bases::types);
+    bases::descriptions);
 }
 } // namespace detail
 
