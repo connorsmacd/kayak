@@ -47,4 +47,5 @@ TEST_CASE("type_description basic compound types", "[type_description]")
                  == "int const* volatile* const volatile"_fs);
 
   STATIC_REQUIRE(kayak::name_of<int[]> == "int[]"_fs);
+  STATIC_REQUIRE(kayak::name_of<int[42]> == "int[42]"_fs);
 }
