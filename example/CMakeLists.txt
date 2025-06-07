@@ -1,0 +1,2 @@
+add_executable(described_struct_example described_struct.cpp)
+target_link_libraries(described_struct_example PRIVATE kayak)

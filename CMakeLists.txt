@@ -18,3 +18,10 @@ add_subdirectory(src)
 if(BUILD_TESTING)
     add_subdirectory(test)
 endif()
+
+option(BUILD_EXAMPLES "Build examples" ON)
+
+if(BUILD_EXAMPLES)
+    add_subdirectory(example)
+endif()
+
