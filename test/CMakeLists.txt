@@ -9,3 +9,7 @@ add_test(NAME fixed_string_test COMMAND fixed_string_test)
 add_executable(struct_description_test struct_description.cpp)
 target_link_libraries(struct_description_test PRIVATE kayak Catch2::Catch2WithMain)
 add_test(NAME struct_description_test COMMAND struct_description_test)
+
+add_executable(type_description_test type_description.cpp)
+target_link_libraries(type_description_test PRIVATE kayak Catch2::Catch2WithMain)
+add_test(NAME type_description_test COMMAND type_description_test)
