@@ -23,5 +23,5 @@ int main()
   static constexpr auto s
     = sample_struct{.i = 42, .d = 3.14, .c = 'x', .b = true};
 
-  std::cout << std::format("{}", s) << '\n';
+  std::cout << std::format("{}\n", s);
 }
