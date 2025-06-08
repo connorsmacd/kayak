@@ -6,6 +6,10 @@ add_executable(test_fixed_string fixed_string.cpp)
 target_link_libraries(test_fixed_string PRIVATE kayak Catch2::Catch2WithMain)
 add_test(NAME test_fixed_string COMMAND test_fixed_string)
 
+add_executable(test_std std.cpp)
+target_link_libraries(test_std PRIVATE kayak Catch2::Catch2WithMain)
+add_test(NAME test_std COMMAND test_std)
+
 add_executable(test_struct_description struct_description.cpp)
 target_link_libraries(test_struct_description PRIVATE kayak Catch2::Catch2WithMain)
 add_test(NAME test_struct_description COMMAND test_struct_description)
