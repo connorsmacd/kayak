@@ -27,6 +27,9 @@ template <member_description... Ms>
 struct member_list {
   static constexpr auto size = sizeof...(Ms);
   static constexpr auto tuple = std::tuple{Ms...};
+
+  template <fixed_string Name>
+  static constexpr auto contains = ((Ms.name == Name) || ...);
 };
 
 template <typename T>

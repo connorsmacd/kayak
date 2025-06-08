@@ -37,6 +37,11 @@ struct member_by_name_traits<T, Name, I, false> :
   member_by_name_traits<T, Name, I + 1> {};
 } // namespace detail
 
+template <described_struct T, fixed_string Name>
+static constexpr auto struct_has_member
+  = struct_description<T>::members::template contains<Name>;
+
+
 template <described_struct T>
 class struct_update {
 public:
@@ -45,6 +50,13 @@ public:
   explicit constexpr struct_update(struct_type s) : s_{std::move(s)} {}
 
   template <fixed_string Name, typename T>
+  constexpr auto with(T&&) -> struct_update&
+  {
+    static_assert(false, "invalid member name");
+  }
+
+  template <fixed_string Name, typename T>
+    requires(struct_has_member<struct_type, Name>)
   constexpr auto with(T&& new_value) -> struct_update<struct_type>&
   {
     std::invoke(detail::member_by_name_traits<struct_type, Name>::member, s_)
