@@ -26,13 +26,13 @@ struct struct_description<user> {
 
 int main()
 {
-  auto const user0 = user{.active = true,
+  auto const user1 = user{.active = true,
                           .username = "someusername123"s,
                           .email = "someone@example.com"s,
                           .sign_in_count = 1};
 
-  auto const user1
-    = kayak::struct_update(user0).with<"email">("another@example.com"s)();
+  auto const user2
+    = kayak::struct_update(user1).with<"email">("another@example.com"s)();
 
-  std::cout << std::format("{}\n", user1);
+  std::cout << std::format("{}\n", user2);
 }
