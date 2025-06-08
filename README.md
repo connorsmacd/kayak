@@ -4,7 +4,7 @@ A C++20 reflection library with minimal macro usage.
 
 **NOTE: Kayak is likely to change substantially as it is under active development.**
 
-## Example Usage
+## Features
 
 ### Describing Structs
 
@@ -34,7 +34,7 @@ int main()
   static constexpr auto s
     = sample_struct{.i = 42, .d = 3.14, .c = 'x', .b = true};
 
-  std::cout << std::format("{}", s) << '\n';
+  std::cout << std::format("{}\n", s);
 }
 ```
 
