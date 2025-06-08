@@ -55,12 +55,12 @@ public:
     static_assert(false, "invalid member name");
   }
 
-  template <fixed_string Name, typename T>
+  template <fixed_string Name, typename Value>
     requires(struct_has_member<struct_type, Name>)
-  constexpr auto with(T&& new_value) -> struct_update<struct_type>&
+  constexpr auto with(Value&& new_value) -> struct_update&
   {
     std::invoke(detail::member_by_name_traits<struct_type, Name>::member, s_)
-      = std::forward<T>(new_value);
+      = std::forward<Value>(new_value);
 
     return *this;
   }
