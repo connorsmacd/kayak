@@ -49,8 +49,8 @@ public:
 
   explicit constexpr struct_update(struct_type s) : s_{std::move(s)} {}
 
-  template <fixed_string Name, typename T>
-  constexpr auto with(T&&) -> struct_update&
+  template <fixed_string Name, typename Value>
+  constexpr auto with(Value&&) -> struct_update&
   {
     static_assert(false, "invalid member name");
   }
