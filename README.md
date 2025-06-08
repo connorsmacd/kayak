@@ -153,3 +153,16 @@ Prints:
 ```text
 {active: true, username: someusername123, email: another@example.com, sign_in_count: 1}
 ```
+
+The use of string literals to designate members may appear brittle, but since they are template parameters, this is strongly typed. If we have a typo in our string:
+
+```c++
+auto const user2
+  = kayak::struct_update(user1).with<"emai">("another@example.com"s)();
+```
+
+We will get a relatively expressive error message. From MSVC 19.43:
+
+```text
+error C2338: static_assert failed: 'invalid member name'
+```
