@@ -98,7 +98,8 @@ template <>
 struct type_description<long double> :
   type_description_impl<"long double", long double> {};
 
-// TODO: The east-const here might be controversial.
+// TODO: The east-const here might be controversial. Consider making this
+// configurable.
 template <described_type T>
 struct type_description<T const> :
   type_description_impl<name_of<T> + " const", T const> {};
