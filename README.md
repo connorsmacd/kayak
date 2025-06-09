@@ -46,7 +46,7 @@ Prints:
 
 ### Struct Update
 
-We often want to create a new struct instance from an existing instance that keeps most of the members the same, but changes some. In C++, this is can be difficult to express elegantly:
+We often want to create a new struct instance from an existing instance that changes a subset of the members while keeping the other members the same. In C++, this can be difficult to express elegantly:
 
 ```c++
 using namespace std::string_literals;
@@ -65,13 +65,7 @@ int main()
                           .email = "someone@example.com"s,
                           .sign_in_count = 1};
 
-  // Succinct, but instance is not const.
-  {
-    auto user2 = user1;
-    user2.email = "another@example.com"s;
-  }
-
-  // Instance is const, but verbose and breaks if new members are added.
+  // Verbose and needs to be updated if new members are added
   {
     auto const user2 = user{.active = user1.active,
                             .username = user1.username,
@@ -79,7 +73,16 @@ int main()
                             .sign_in_count = user1.sign_in_count};
   }
 
-  // Instance is const and solution is future-proof, but verbose.
+  // Succinct, but not const correct
+  {
+    auto user2 = user1;
+    user2.email = "another@example.com"s;
+  }
+
+  // Using an IIFE is fine, but:
+  //   * still introduces explicit mutable state
+  //   * still a bit verbose
+  //   * does not express much intent
   {
     auto const user2 = [&] {
       auto result = user1;
