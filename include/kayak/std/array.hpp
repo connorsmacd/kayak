@@ -8,12 +8,11 @@
 namespace kayak
 {
 template <typename T, std::size_t N>
-struct type_description<std::array<T, N>>
-  : type_description_impl<"std::array<" + name_of<T> + ", " + as_fixed_string<N>
-                          + ">",
-                          std::array<T, N>>
-{
-};
+struct type_description<std::array<T, N>> :
+  type_description_impl<
+    "std::array<" + join(fixed_string{", "}, name_of<T>, as_fixed_string<N>)
+      + ">",
+    std::array<T, N>> {};
 } // namespace kayak
 
 #endif

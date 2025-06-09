@@ -80,3 +80,11 @@ TEST_CASE("fixed_string from number", "[fixed_string]")
   STATIC_REQUIRE(kayak::as_fixed_string<100> == "100"_fs);
   STATIC_REQUIRE(kayak::as_fixed_string<1234> == "1234"_fs);
 }
+
+TEST_CASE("fixed_string join", "[fixed_string]")
+{
+  STATIC_REQUIRE(kayak::join(", "_fs, "first"_fs, "second"_fs, "third"_fs)
+                 == "first, second, third"_fs);
+  STATIC_REQUIRE(kayak::join(", "_fs, "single-string"_fs)
+                 == "single-string"_fs);
+}

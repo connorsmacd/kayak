@@ -131,6 +131,32 @@ constexpr auto to_fixed_string()
 
 template <std::size_t Number>
 static constexpr auto as_fixed_string = detail::to_fixed_string<Number>();
+
+namespace detail
+{
+template <std::size_t DelimiterL, std::size_t LastL>
+constexpr auto join_impl(fixed_string<DelimiterL> const&,
+                         fixed_string<LastL> const& lastString)
+{
+  return lastString;
+}
+
+template <std::size_t DelimiterL, std::size_t LeftL, std::size_t... RightLs>
+constexpr auto join_impl(fixed_string<DelimiterL> const& delimiter,
+                         fixed_string<LeftL> const& leftString,
+                         fixed_string<RightLs> const&... rightStrings)
+{
+  return leftString + delimiter + join_impl(delimiter, rightStrings...);
+}
+} // namespace detail
+
+template <std::size_t DelimiterL, std::size_t... Ls>
+constexpr auto join(fixed_string<DelimiterL> const& delimiter,
+                    fixed_string<Ls> const&... strings)
+  -> fixed_string<(... + Ls) + DelimiterL * (sizeof...(Ls) - 1)>
+{
+  return detail::join_impl(delimiter, strings...);
+}
 } // namespace kayak
 
 #endif
