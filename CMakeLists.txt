@@ -16,12 +16,12 @@ add_subdirectory(external)
 add_subdirectory(src)
 
 if(BUILD_TESTING)
-    add_subdirectory(test)
+    add_subdirectory(tests)
 endif()
 
 option(BUILD_EXAMPLES "Build examples" ON)
 
 if(BUILD_EXAMPLES)
-    add_subdirectory(example)
+    add_subdirectory(examples)
 endif()
 
