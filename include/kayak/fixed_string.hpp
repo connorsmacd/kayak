@@ -157,6 +157,14 @@ constexpr auto join(fixed_string<DelimiterL> const& delimiter,
 {
   return detail::join_impl(delimiter, strs...);
 }
+
+// TODO: Figure out why args cannot be deduced from C-style string.
+template <std::size_t DelimiterN, std::size_t... Ls>
+constexpr auto join(char const (&delimiter_c_str)[DelimiterN],
+                    fixed_string<Ls> const&... strs)
+{
+  return join(fixed_string{delimiter_c_str}, strs...);
+}
 } // namespace kayak
 
 #endif
