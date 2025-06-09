@@ -136,26 +136,26 @@ namespace detail
 {
 template <std::size_t DelimiterL, std::size_t LastL>
 constexpr auto join_impl(fixed_string<DelimiterL> const&,
-                         fixed_string<LastL> const& lastString)
+                         fixed_string<LastL> const& last_str)
 {
-  return lastString;
+  return last_str;
 }
 
 template <std::size_t DelimiterL, std::size_t LeftL, std::size_t... RightLs>
 constexpr auto join_impl(fixed_string<DelimiterL> const& delimiter,
-                         fixed_string<LeftL> const& leftString,
-                         fixed_string<RightLs> const&... rightStrings)
+                         fixed_string<LeftL> const& left_strs,
+                         fixed_string<RightLs> const&... right_strs)
 {
-  return leftString + delimiter + join_impl(delimiter, rightStrings...);
+  return left_strs + delimiter + join_impl(delimiter, right_strs...);
 }
 } // namespace detail
 
 template <std::size_t DelimiterL, std::size_t... Ls>
 constexpr auto join(fixed_string<DelimiterL> const& delimiter,
-                    fixed_string<Ls> const&... strings)
+                    fixed_string<Ls> const&... strs)
   -> fixed_string<(... + Ls) + DelimiterL * (sizeof...(Ls) - 1)>
 {
-  return detail::join_impl(delimiter, strings...);
+  return detail::join_impl(delimiter, strs...);
 }
 } // namespace kayak
 
