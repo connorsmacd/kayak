@@ -41,7 +41,6 @@ template <described_struct T, fixed_string Name>
 static constexpr auto struct_has_member
   = struct_description<T>::members::template contains<Name>;
 
-
 template <described_struct T>
 class struct_update {
 public:
