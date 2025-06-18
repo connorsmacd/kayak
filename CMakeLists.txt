@@ -8,6 +8,7 @@ project(kayak
 )
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(CTest)
 
@@ -24,4 +25,3 @@ option(BUILD_EXAMPLES "Build examples" ON)
 if(BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
-
